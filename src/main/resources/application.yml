@@ -1,0 +1,9 @@
+server:
+  servlet:
+    context-path: /   #url的前缀
+    session:
+      timeout: 10  # session超时时间
+  port: 8080
+  session-timeout: 30 # 无效
+  tomcat.max-threads: 0
+  tomcat.uri-encoding: UTF-8
