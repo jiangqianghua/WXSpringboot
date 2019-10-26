@@ -1,5 +1,8 @@
 package com.jqh.wxserver.controller;
 
+import com.jqh.wxserver.bean.*;
+import com.jqh.wxserver.utils.XMLUtils;
+import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -52,13 +55,7 @@ public class ApiController {
 //        System.out.println("wxpost=" + sb.toString());
         Map<String,String> map = parseRequest(request.getInputStream());
         System.out.println(map.toString());
-        return "<xml>\n" +
-                "  <ToUserName><![CDATA[o-iULwCy9Qy44Tiq8ZskKavlaktU]]></ToUserName>\n" +
-                "  <FromUserName><![CDATA[gh_5707e632245d]]></FromUserName>\n" +
-                "  <CreateTime>1571760815</CreateTime>\n" +
-                "  <MsgType><![CDATA[text]]></MsgType>\n" +
-                "  <Content><![CDATA[你好]]></Content>\n" +
-                "</xml>";
+        return getXMLRepose(map);
     }
 
     private boolean check(String timestamp, String nonce, String sigature){
@@ -108,5 +105,42 @@ public class ApiController {
         }
         return null;
     }
+
+    /**
+     * 处理所有事件和消息的回复
+     * @param requestMap
+     * @return
+     */
+    String getXMLRepose(Map<String, String> requestMap){
+
+        BaseMessage msg = null;
+        String msgType = requestMap.get("MsgType");
+        switch (msgType){
+            case "text":
+                msg = dealTextMessage(requestMap);
+                break;
+            case "image":
+                break;
+            case "voice":
+                break;
+            case "voide":
+                break;
+            case "shortvideo":
+                break;
+            case "link":
+                break;
+            case "location":
+                break;
+        }
+        String xml = XMLUtils.beanToXml(msg);
+        System.out.println(xml);
+        return xml;
+    }
+
+    private BaseMessage dealTextMessage(Map<String, String> requestMap) {
+        TextMessage tm = new TextMessage(requestMap, "收到文本消息");
+        return tm;
+    }
+
 
 }
