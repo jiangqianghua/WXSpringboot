@@ -21,7 +21,7 @@ public class TokenUtils {
             Map<String, Object> resMap = JsonUtils.toMap(res);
             String token = String.valueOf(resMap.get("access_token"));
             Double expires = (Double)resMap.get("expires_in");
-            AccessToken accessToken = new AccessToken(token, expires);
+            accessToken = new AccessToken(token, expires);
             System.out.println(accessToken.toString());
         }
     }
@@ -34,7 +34,7 @@ public class TokenUtils {
     }
 
     public static void main(String[] args) {
-        getToken();
+        getAccessToken();
     }
 
 }

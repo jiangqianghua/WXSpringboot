@@ -131,10 +131,51 @@ public class ApiController {
                 break;
             case "location":
                 break;
+            case "event":
+                // 用户点击按钮事件
+                msg = dealEventMessage(requestMap);
+                break;
         }
         String xml = XMLUtils.beanToXml(msg);
         System.out.println(xml);
         return xml;
+    }
+
+    /**
+     * 处理用户点击事件
+     * @param requestMap
+     * @return
+     */
+    private BaseMessage dealEventMessage(Map<String, String> requestMap){
+
+        // 处理用户点击菜单事件
+        String  event = requestMap.get("Event");  // 创建菜单设置的key值
+        switch (event) {
+            case "CLICK":
+                return dealEventClickMessage(requestMap);
+            case "VIEW":
+                return dealEventVIEWMessage(requestMap);
+        }
+        return null;
+    }
+
+    private BaseMessage dealEventVIEWMessage(Map<String, String> requestMap){
+        // 处理用户点击菜单事件
+        String  key = requestMap.get("EventKey");  // 创建菜单设置的key值
+        System.out.println(key);
+        return null;
+    }
+
+    private BaseMessage dealEventClickMessage(Map<String, String> requestMap){
+        // 处理用户点击菜单事件
+        String  key = requestMap.get("EventKey");  // 创建菜单设置的key值
+        switch (key) {
+            case "1":
+                return new TextMessage(requestMap, "你点击了1菜单");
+            case "32":
+                return new TextMessage(requestMap, "你点击了32菜单");
+        }
+        return null;
     }
 
     private BaseMessage dealTextMessage(Map<String, String> requestMap) {

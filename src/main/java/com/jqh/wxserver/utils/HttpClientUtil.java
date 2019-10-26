@@ -1,12 +1,18 @@
 package com.jqh.wxserver.utils;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -70,4 +76,25 @@ public class HttpClientUtil {
         }
         return null;
     }
+
+    public static String doPost(String url,String json){
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost(url);
+        String response = "";
+        try {
+            StringEntity s = new StringEntity(json, "utf-8");
+            s.setContentEncoding("utf-8");
+            s.setContentType("application/json");//发送json数据需要设置contentType
+            post.setEntity(s);
+            HttpResponse res = client.execute(post);
+            if(res.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+                HttpEntity entity = res.getEntity();
+                response = EntityUtils.toString(res.getEntity());// 返回json格式：
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return response;
+    }
+
 }
