@@ -1,6 +1,9 @@
 package com.jqh.wxserver.controller;
 
 import com.jqh.wxserver.bean.*;
+import com.jqh.wxserver.user.UserManager;
+import com.jqh.wxserver.utils.JsonUtils;
+import com.jqh.wxserver.utils.TokenUtils;
 import com.jqh.wxserver.utils.XMLUtils;
 import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
@@ -28,6 +31,21 @@ import java.util.Map;
 public class ApiController {
 
     public static final String TOKEN = "jqh";
+
+    // 用户网页授权回调地址
+    @GetMapping("/getUserInfo")
+    public String getUserInfo(String code){
+        System.out.println("getUserInfo; code=" + code);
+        // 通过code换取token
+        String result = TokenUtils.codeToToken(code);
+        Map<String, String> map = JsonUtils.toMap(result);
+        String accessToken = map.get("access_token");
+        String openid = map.get("openid"); // 该openid是获取该用户的openid
+        // 根据token 和 openid拉取用户基本信息
+        String userinfo = UserManager.getUserInfoForAuth(accessToken, openid);
+        return userinfo;
+    }
+    // 公众号验证接口
     @GetMapping("/wx")
     public String wxget(String signature,String timestamp,String nonce,String echostr){
         System.out.println("wx");
@@ -41,7 +59,7 @@ public class ApiController {
         }
         return "wx";
     }
-
+    // 微信公众号统一调用接口
     @PostMapping("/wx")
     public String wxpost(HttpServletRequest request)throws Exception{
 
@@ -173,14 +191,18 @@ public class ApiController {
             case "1":
                 return new TextMessage(requestMap, "你点击了1菜单");
             case "32":
-                return new TextMessage(requestMap, "你点击了32菜单");
+                // 测试网页授权
+                //https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html
+                String  directUrl= "http://jweixin.free.idcfengye.com/weixin/getUserInfo";
+                String  url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxb88c9e0dade34d8b&redirect_uri="+directUrl+"&response_type=code&scope=snsapi_userinfo#wechat_redirect";
+                System.out.println("授权链接地址：" + url);
+                return new TextMessage(requestMap, "点击<a href=\""+url+"\">这里</a>登录");
         }
         return null;
     }
 
     private BaseMessage dealTextMessage(Map<String, String> requestMap) {
-        TextMessage tm = new TextMessage(requestMap, "收到文本消息");
-        return tm;
+        return new TextMessage(requestMap, "文本消息");
     }
 
 

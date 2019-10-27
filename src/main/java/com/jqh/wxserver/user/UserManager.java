@@ -5,7 +5,7 @@ import com.jqh.wxserver.utils.TokenUtils;
 
 public class UserManager {
     public static final String GET_USER_INFO_URL = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
-
+    public static final String GET_USER_INFO_URL_AUTH = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
     /**
      * 获取已经关注公众号的用户信息
      * @param openid
@@ -19,6 +19,14 @@ public class UserManager {
                 .replace("OPENID", openid);
         System.out.println("url=" + url);
         return HttpClientUtil.doGet(url);
+    }
+
+    public static String getUserInfoForAuth(String acceccToken, String openid){
+        String url = GET_USER_INFO_URL_AUTH.replace("ACCESS_TOKEN",acceccToken)
+                .replace("OPENID",openid);
+        String userinfo = HttpClientUtil.doGet(url);
+        System.out.println(userinfo);
+        return userinfo;
     }
 
     public static void main(String[] args) {
